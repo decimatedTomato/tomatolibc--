@@ -1,3 +1,4 @@
+#include <atomic>
 #include <utility>
 
 namespace tomato
@@ -6,7 +7,7 @@ template <typename T> class SharedPtr
 {
   private:
     T   *data;
-    int *rc;
+    std::atomic<int> *rc;
 
   public:
     static SharedPtr make_shared(T data)
@@ -77,7 +78,7 @@ template <typename T> class SharedPtr
     }
 
   private:
-    SharedPtr(T data) : data(new T(data)), rc(new int(1))
+    SharedPtr(T data) : data(new T(data)), rc(new std::atomic<int>(1))
     {
     }
 };

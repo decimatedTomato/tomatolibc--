@@ -6,7 +6,5 @@ Nice start to an implementation of smart pointers
 - No deleter optional template parameter
 	- c++20 no_unique_address optimization
 	- pre-c++20 Emtpy Base Optimization
-- The shared_ptr reference count is not thread safe
 - Type erased deleter for shared_ptr
 - The weak_ptr is unimplemented
-
