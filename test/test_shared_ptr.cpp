@@ -1,14 +1,14 @@
 #include "shared_ptr.hpp"
 
-#define PRINTLN(X) X.println(#X)
+#define PRINTLN(X) //X.println(#X)
 
 void test_shared_ptr(void)
 {
     auto p = tomato::SharedPtr<int>::make_shared(10);
-    // PRINTLN(p);
+    PRINTLN(p);
     auto q = p;
-    // PRINTLN(p);
-    // PRINTLN(q);
+    PRINTLN(p);
+    PRINTLN(q);
     auto r = std::move(p);
     PRINTLN(p);
     PRINTLN(q);
