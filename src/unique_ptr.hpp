@@ -10,10 +10,11 @@ template <typename T> class UniquePtr
     T *data;
 
   public:
-    static UniquePtr make_unique(T data)
+    UniquePtr() noexcept : data{nullptr}
     {
-        UniquePtr ret(data);
-        return ret;
+    }
+    UniquePtr(T *ptr) noexcept : data{ptr}
+    {
     }
     ~UniquePtr()
     {
@@ -54,16 +55,17 @@ template <typename T> class UniquePtr
 
     void reset(T *ptr = nullptr) noexcept
     {
-        T * old = std::exchange(data, ptr);
+        T *old = std::exchange(data, ptr);
         if (old)
         {
             delete old;
         }
     }
-
-  private:
-    UniquePtr(T data) : data(new T(data))
-    {
-    }
 };
+
+template <typename T, typename... Args>
+UniquePtr<T> make_unique(Args &&...args)
+{
+    return UniquePtr<T>(new T(std::forward<Args>(args)...));
+}
 } // namespace tomato

@@ -4,10 +4,10 @@
 
 void test_unique_ptr(void)
 {
-    auto p = tomato::UniquePtr<int>::make_unique(4);
+    auto p = tomato::make_unique<int>(4);
     PRINTLN(p);
     // auto q = p;  // compiler error
-    auto q = tomato::UniquePtr<int>::make_unique(6);
+    auto q = tomato::make_unique<int>(6);
     q = std::move(p);
     PRINTLN(p);
     PRINTLN(q);
