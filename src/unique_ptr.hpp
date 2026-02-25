@@ -17,18 +17,19 @@ template <typename T> class UniquePtr
     }
     ~UniquePtr()
     {
-        delete data;
+        if (data)
+        {
+            delete data;
+        }
     }
-    UniquePtr(UniquePtr &&rhs) noexcept : data(std::exchange(rhs.data, nullptr))
+    UniquePtr(UniquePtr &&rhs) noexcept : data(rhs.release())
     {
     }
     UniquePtr &operator=(UniquePtr &&rhs) noexcept
     {
         if (this != &rhs)
         {
-            delete data;
-            data = rhs.data;
-            rhs.data = nullptr;
+            reset(rhs.release());
         }
         return *this;
     }
@@ -44,6 +45,20 @@ template <typename T> class UniquePtr
     T *operator->() const noexcept
     {
         return get();
+    }
+
+    T *release() noexcept
+    {
+        return std::exchange(data, nullptr);
+    }
+
+    void reset(T *ptr = nullptr) noexcept
+    {
+        T * old = std::exchange(data, ptr);
+        if (old)
+        {
+            delete old;
+        }
     }
 
   private:
