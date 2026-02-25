@@ -1,15 +1,15 @@
 #include <type_traits>
 #include <utility>
 
-namespace tomato {
-
-template<typename T>
-class UniquePtr
+namespace tomato
 {
-private:
+
+template <typename T> class UniquePtr
+{
+  private:
     T *data;
 
-public:
+  public:
     static UniquePtr make_unique(T data)
     {
         UniquePtr ret(data);
@@ -19,11 +19,10 @@ public:
     {
         delete data;
     }
-    UniquePtr(UniquePtr&& rhs) noexcept
-    : data(std::exchange(rhs.data, nullptr))
+    UniquePtr(UniquePtr &&rhs) noexcept : data(std::exchange(rhs.data, nullptr))
     {
     }
-    UniquePtr& operator=(UniquePtr&& rhs) noexcept
+    UniquePtr &operator=(UniquePtr &&rhs) noexcept
     {
         if (this != &rhs)
         {
@@ -44,12 +43,12 @@ public:
     }
     T *operator->() const noexcept
     {
-        return get(); 
+        return get();
     }
-    
-    private:
-    UniquePtr(T data)
-    : data(new T(data))
-    {}
+
+  private:
+    UniquePtr(T data) : data(new T(data))
+    {
+    }
 };
 } // namespace tomato
