@@ -8,7 +8,7 @@
 
 void test_shared_ptr(void)
 {
-    auto p = tomato::SharedPtr<int>::make_shared(10);
+    auto p = tomato::make_shared<int>(10);
     PRINTLN(p);
     auto q = p;
     PRINTLN(p);

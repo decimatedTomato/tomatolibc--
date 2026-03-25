@@ -37,19 +37,13 @@ class SharedPtr
     }
     SharedPtr(const SharedPtr &rhs) : data(rhs.data), rc(rhs.rc)
     {
-        // I think this should maybe just increment the reference counter
-        // and then return rhs
         (*rc)++;
     }
     SharedPtr &operator=(const SharedPtr &rhs)
     {
         if (this != &rhs)
         {
-            // I don't know what to do with the lhs
-            this->~SharedPtr(); // TODO is this correct?
-            data = rhs.data;
-            rc = rhs.rc;
-            (*rc)++;
+            reset(rhs.get());
         }
         return *this;
     }
@@ -62,15 +56,7 @@ class SharedPtr
     {
         if (this != &rhs)
         {
-            // Usually here you destruct the lhs object
-            // I'm not sure how to do that to a shared pointer
-
-            // Take ownership of objects from rhs
-            data = rhs.data;
-            rc = rhs.rc;
-            // Mutate the rhs into a moved-out object
-            rhs.data = nullptr;
-            rhs.rc = 0;
+            reset(rhs);
         }
         return *this;
     }
@@ -88,8 +74,6 @@ class SharedPtr
         return get();
     }
 
-  private:
-    SharedPtr(T data) : data(new T(data)), rc(new std::atomic<int>(1))
     void reset(T *ptr = nullptr) noexcept
     {
         this->~SharedPtr();
@@ -118,4 +102,9 @@ class SharedPtr
     }
 #endif
 };
+
+template <typename T, typename... Args>
+SharedPtr<T> make_shared(Args &&...args)
+{
+    return Shared_ptr<T>(new T(std::forward<Args>(args)...));};
 } // namespace tomato
