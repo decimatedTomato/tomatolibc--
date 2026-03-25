@@ -65,6 +65,22 @@ class UniquePtr
             delete old;
         }
     }
+    
+    void swap(UniquePtr& rhs) noexcept
+    {
+        rhs.data = std::exchange(data, rhs.data);
+    }
+
+#ifdef DEBUG
+    void println(const char *variable_name) const
+    {
+        using namespace std;
+        cout << "Dereferencing " << variable_name << " gives " << data;
+        if (data)
+            cout << " -> " << *data;
+        cout << endl;
+    }
+#endif
 };
 
 template <typename T, typename... Args>

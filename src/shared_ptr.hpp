@@ -16,15 +16,17 @@ class SharedPtr
     std::atomic<int> *rc;
 
   public:
-    static SharedPtr make_shared(T data)
+    SharedPtr() noexcept : data(nullptr), rc(nullptr)
     {
-        SharedPtr ret(data);
-        return ret;
+    }
+    SharedPtr(T data) : data(new T(data)), rc(new std::atomic<int>(1))
+    {
     }
     ~SharedPtr()
     {
         if (rc)
         {
+            // race condition here?
             --(*rc);
             if (*rc == 0)
             {
@@ -88,7 +90,32 @@ class SharedPtr
 
   private:
     SharedPtr(T data) : data(new T(data)), rc(new std::atomic<int>(1))
+    void reset(T *ptr = nullptr) noexcept
     {
+        this->~SharedPtr();
+        data(ptr);
+        rc = new std::atomic<int>(1);
     }
+
+    void swap(SharedPtr& rhs) noexcept
+    {
+        rhs.data = std::exchange(data, rhs.data);
+        rhs.rc = std::exchange(rc, rhs.rc);
+    }
+
+#ifdef DEBUG
+    void println(const char *variable_name) const
+    {
+        using namespace std;
+        cout << "Dereferencing " << variable_name << " gives " << data;
+        if (data)
+            cout << " -> " << *data;
+        cout << endl;
+        cout << "Reference count " << rc;
+        if (rc)
+            cout << " at " << *rc;
+        cout << endl;
+    }
+#endif
 };
 } // namespace tomato
