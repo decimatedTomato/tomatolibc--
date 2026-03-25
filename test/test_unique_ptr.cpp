@@ -1,6 +1,10 @@
 #include "unique_ptr.hpp"
 
-#define PRINTLN(X) //X.println(#X)
+#ifdef DEBUG
+#define PRINTLN(X) X.println(#X)
+#else
+#define PRINTLN(X)
+#endif
 
 void test_unique_ptr(void)
 {

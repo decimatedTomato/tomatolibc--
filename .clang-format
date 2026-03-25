@@ -3,4 +3,5 @@ AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveDeclarations: true
 BinPackParameters: false
 BinPackArguments: false
+BreakTemplateDeclarations: Yes
 ColumnLimit: 80

@@ -1,19 +1,23 @@
 #include <type_traits>
 #include <utility>
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 namespace tomato
 {
-
-template <typename T> class UniquePtr
+template <typename T>
+class UniquePtr
 {
   private:
     T *data;
 
   public:
-    UniquePtr() noexcept : data{nullptr}
+    UniquePtr() noexcept : data(nullptr)
     {
     }
-    UniquePtr(T *ptr) noexcept : data{ptr}
+    UniquePtr(T *ptr) noexcept : data(ptr)
     {
     }
     ~UniquePtr()
@@ -37,7 +41,7 @@ template <typename T> class UniquePtr
 
     T *get() const noexcept
     {
-        return *data;
+        return data;
     }
     std::add_lvalue_reference<T>::type operator*() const noexcept
     {

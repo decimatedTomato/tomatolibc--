@@ -1,5 +1,6 @@
 CompileFlags:
   Add: [
+    -DDEBUG,
     -I../src,
     -std=c++20,
   ]

@@ -1,12 +1,18 @@
 #include <atomic>
+#include <type_traits>
 #include <utility>
+
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 namespace tomato
 {
-template <typename T> class SharedPtr
+template <typename T>
+class SharedPtr
 {
   private:
-    T   *data;
+    T                *data;
     std::atomic<int> *rc;
 
   public:
@@ -67,14 +73,17 @@ template <typename T> class SharedPtr
         return *this;
     }
 
-    T operator*() const noexcept
+    T *get() const noexcept
+    {
+        return data;
+    }
+    std::add_lvalue_reference<T>::type operator*() const noexcept
     {
         return *data;
     }
-
-    T get() const noexcept
+    T *operator->() const noexcept
     {
-        return *data;
+        return get();
     }
 
   private:
