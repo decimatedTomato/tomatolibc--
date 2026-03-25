@@ -7,17 +7,19 @@
 
 namespace tomato
 {
-template <typename T>
+template<typename T>
 class UniquePtr
 {
   private:
     T *data;
 
   public:
-    UniquePtr() noexcept : data(nullptr)
+    UniquePtr() noexcept
+        : data(nullptr)
     {
     }
-    UniquePtr(T *ptr) noexcept : data(ptr)
+    UniquePtr(T *ptr) noexcept
+        : data(ptr)
     {
     }
     ~UniquePtr()
@@ -27,7 +29,8 @@ class UniquePtr
             delete data;
         }
     }
-    UniquePtr(UniquePtr &&rhs) noexcept : data(rhs.release())
+    UniquePtr(UniquePtr &&rhs) noexcept
+        : data(rhs.release())
     {
     }
     UniquePtr &operator=(UniquePtr &&rhs) noexcept
@@ -65,8 +68,8 @@ class UniquePtr
             delete old;
         }
     }
-    
-    void swap(UniquePtr& rhs) noexcept
+
+    void swap(UniquePtr &rhs) noexcept
     {
         rhs.data = std::exchange(data, rhs.data);
     }
@@ -83,7 +86,7 @@ class UniquePtr
 #endif
 };
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 UniquePtr<T> make_unique(Args &&...args)
 {
     return UniquePtr<T>(new T(std::forward<Args>(args)...));

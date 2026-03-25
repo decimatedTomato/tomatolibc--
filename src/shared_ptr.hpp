@@ -8,7 +8,7 @@
 
 namespace tomato
 {
-template <typename T>
+template<typename T>
 class SharedPtr
 {
   private:
@@ -16,10 +16,14 @@ class SharedPtr
     std::atomic<int> *rc;
 
   public:
-    SharedPtr() noexcept : data(nullptr), rc(nullptr)
+    SharedPtr() noexcept
+        : data(nullptr)
+        , rc(nullptr)
     {
     }
-    SharedPtr(T data) : data(new T(data)), rc(new std::atomic<int>(1))
+    SharedPtr(T *ptr)
+        : data(ptr)
+        , rc(new std::atomic<int>(1))
     {
     }
     ~SharedPtr()
@@ -35,7 +39,9 @@ class SharedPtr
             }
         }
     }
-    SharedPtr(const SharedPtr &rhs) : data(rhs.data), rc(rhs.rc)
+    SharedPtr(const SharedPtr &rhs)
+        : data(rhs.data)
+        , rc(rhs.rc)
     {
         (*rc)++;
     }
@@ -48,15 +54,16 @@ class SharedPtr
         return *this;
     }
     SharedPtr(SharedPtr &&rhs) noexcept
-        : data(std::exchange(rhs.data, nullptr)),
-          rc(std::exchange(rhs.rc, nullptr))
+        : data(std::exchange(rhs.data, nullptr))
+        , rc(std::exchange(rhs.rc, nullptr))
     {
     }
     SharedPtr &operator=(SharedPtr &&rhs) noexcept
     {
         if (this != &rhs)
         {
-            reset(rhs);
+            data = rhs.data;
+            rc = rhs.rc;
         }
         return *this;
     }
@@ -77,11 +84,11 @@ class SharedPtr
     void reset(T *ptr = nullptr) noexcept
     {
         this->~SharedPtr();
-        data(ptr);
+        data = ptr;
         rc = new std::atomic<int>(1);
     }
 
-    void swap(SharedPtr& rhs) noexcept
+    void swap(SharedPtr &rhs) noexcept
     {
         rhs.data = std::exchange(data, rhs.data);
         rhs.rc = std::exchange(rc, rhs.rc);
@@ -103,8 +110,9 @@ class SharedPtr
 #endif
 };
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 SharedPtr<T> make_shared(Args &&...args)
 {
-    return Shared_ptr<T>(new T(std::forward<Args>(args)...));};
+    return SharedPtr<T>(new T(std::forward<Args>(args)...));
+};
 } // namespace tomato
